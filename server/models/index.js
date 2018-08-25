@@ -1,13 +1,15 @@
 var db = require('../db');
 
-// console.log(db.query);
+var defaultCorsHeaders = {
+  'access-control-allow-origin': '*',
+  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
+  'access-control-allow-headers': 'content-type, accept',
+  'access-control-max-age': 10 // Seconds.
+};
 
 // (function (username, message, roomname) {
 //       let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', '${message}');`;
-//       console.log(string);
-//       db.query(string, (err, [], data) => {
-//         console.log(data)
-//       })
+//       db.queryPromise(string)
 //       })('user', 'text', 'lobby');
 
 // (function () {
@@ -20,67 +22,63 @@ var db = require('../db');
 
 module.exports = {
   messages: {
-    get: function () {
+    get: function (res) {
       let string = `select * from messages;`;
-      return new Promise(function(resolve, reject) {
-        db.connection.query(string, [], (err, data) => {
-          if (err) {
-            return reject(err);
-          } else {
-            resolve(data);
-          }
-        });
-      });
+      db.queryPromise(string).then(function(results) {
+        let newObj = {results};
+        res.writeHead(200, defaultCorsHeaders);
+        // res.send(JSON.stringify(newObj));
+        res.end(JSON.stringify(newObj));
+      }).catch((err) => { throw err; });
     }, // a function which produces all the messages
     
-    post: function (username, message, roomname) {
+    post: function (username, message, roomname, res) {
       message = JSON.stringify(message);
       // let queryString = 'INSERT INTO messages (id, roomname) values id = ;'
       let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', ''${message}'')`;
-      db.connection.query(string, [], (err, data) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(data);
-        }
+      db.queryPromise(string).then(function(result) {
+        res.end();
       });
+      // db.connection.query(string, [], (err, data) => {
+      //   // if (err) {
+      //   //   console.log(err);
+      //   // } else {
+      //     console.log(data);
+      //   // }
+      // });
+      
       
       let userString = `INSERT INTO users (userId, username) values (null, '${username}')`;
-      db.connection.query(userString, [], (err, data) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(data);
-        }
-      });
+      
+      db.queryPromise(userString)
+        .then(function(results) { console.log(results); });
+      // db.connection.query(userString, [], (err, data) => {
+      //   // if (err) {
+      //   //   console.log(err);
+      //   // } else {
+      //     console.log(data);
+      //   // }
+      // });
     } // a function which can be used to insert a message into the database
   },
 
   users: {
     // Ditto as above.
-    get: function () {
+    get: function (res) {
       let string = `select * from users;`;
-      return new Promise(function(resolve, reject) {
-        db.connection.query(string, [], (err, data) => {
-          if (err) {
-            return reject(err);
-          } else {
-            console.log(data);
-            resolve(data);
-          }
-        });
-      });
+      db.queryPromise(string).then(function(results) {
+        console.log(results);
+        let newObj = {results};
+        res.writeHead(200, defaultCorsHeaders);
+        res.write(JSON.stringify(newObj));
+        res.end();
+      }).catch((err) => { throw err; });
     },
     
-    post: function (username) {
+    post: function (username, res) {
       let userString = `INSERT INTO users (userId, username) values (null, '${username}')`;
-      db.connection.query(userString, (err, data) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log(data);
-        }
-      });
+      db.queryPromise(userString)
+        .then(function(results) { res.end(); });
     }
   }
 };

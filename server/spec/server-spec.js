@@ -9,8 +9,6 @@ describe('Persistent Node Chat Server', function() {
   var dbConnection;
 
   beforeEach(function(done) {
-    // console.log(JSON.stringify(done));
-    
     dbConnection = mysql.createConnection({
       user: 'student',
       password: 'student',
@@ -18,7 +16,7 @@ describe('Persistent Node Chat Server', function() {
     });
     dbConnection.connect();
 
-      var tablename = "messages"; // TODO: fill this out
+    var tablename = "messages"; // TODO: fill this out
 
     /* Empty the db table before each test so that multiple tests
      * (or repeated runs of the tests) won't screw each other up: */
