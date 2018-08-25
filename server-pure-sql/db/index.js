@@ -19,13 +19,3 @@ var queryPromise = Promise.promisify(db.query.bind(db));
 
 exports.queryPromise = queryPromise;
 exports.connection = db;
-
-
-
-// function (string, callback) {
-//   db.query(string, (err, results) => {
-//     if (err) throw err;
-//     console.log('QUERY DATA', results);
-//     callback(results);
-//   })
-// }

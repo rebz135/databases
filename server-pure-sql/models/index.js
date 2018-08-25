@@ -22,23 +22,23 @@ var defaultCorsHeaders = {
 
 module.exports = {
   messages: {
-    get: function (res) {
+    get: function () {
       let string = `select * from messages;`;
-      db.queryPromise(string).then(function(results) {
-        let newObj = {results};
-        res.writeHead(200, defaultCorsHeaders);
-        // res.send(JSON.stringify(newObj));
-        res.end(JSON.stringify(newObj));
-      }).catch((err) => { throw err; });
+      return db.queryPromise(string);
+      // .then(function(results) {
+      //   return results;
+      //   let newObj = {results};
+      //   res.writeHead(200, defaultCorsHeaders);
+      //   // res.send(JSON.stringify(newObj));
+      //   res.end(JSON.stringify(newObj));
+      // }).catch((err) => { throw err; });
     }, // a function which produces all the messages
     
-    post: function (username, message, roomname, res) {
+    post: function (username, message, roomname) {
       message = JSON.stringify(message);
       // let queryString = 'INSERT INTO messages (id, roomname) values id = ;'
       let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', ''${message}'')`;
-      db.queryPromise(string).then(function(result) {
-        res.end();
-      });
+      return db.queryPromise(string);
       // db.connection.query(string, [], (err, data) => {
       //   // if (err) {
       //   //   console.log(err);
@@ -64,21 +64,23 @@ module.exports = {
 
   users: {
     // Ditto as above.
-    get: function (res) {
+    get: function () {
       let string = `select * from users;`;
-      db.queryPromise(string).then(function(results) {
-        console.log(results);
-        let newObj = {results};
-        res.writeHead(200, defaultCorsHeaders);
-        res.write(JSON.stringify(newObj));
-        res.end();
-      }).catch((err) => { throw err; });
+      return db.queryPromise(string);
+      
+      // let string = `select * from users;`;
+      // db.queryPromise(string).then(function(results) {
+      //   console.log(results);
+      //   let newObj = {results};
+      //   res.writeHead(200, defaultCorsHeaders);
+      //   res.write(JSON.stringify(newObj));
+      //   res.end();
+      // }).catch((err) => { throw err; });
     },
     
     post: function (username, res) {
       let userString = `INSERT INTO users (userId, username) values (null, '${username}')`;
-      db.queryPromise(userString)
-        .then(function(results) { res.end(); });
+      return db.queryPromise(userString);
     }
   }
 };

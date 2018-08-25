@@ -1,93 +1,36 @@
 var db = require('../db');
 
-var defaultCorsHeaders = {
-  'access-control-allow-origin': '*',
-  'access-control-allow-methods': 'GET, POST, PUT, DELETE, OPTIONS',
-  'access-control-allow-headers': 'content-type, accept',
-  'access-control-max-age': 10 // Seconds.
-};
-
-// (function (username, message, roomname) {
-//       let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', '${message}');`;
-//       db.queryPromise(string)
-//       })('user', 'text', 'lobby');
-
-// (function () {
-//       let string = `select * from messages;`;
-//       db.query(string, (data) => {
-//         console.log(JSON.stringify(data))
-//       })
-//     })();
-
-
 module.exports = {
   messages: {
-    get: function (res) {
-      let string = `select * from messages;`;
-      db.queryPromise(string).then(function(results) {
-        let newObj = {results};
-        res.writeHead(200, defaultCorsHeaders);
-        // res.send(JSON.stringify(newObj));
-        res.end(JSON.stringify(newObj));
-      }).catch((err) => { throw err; });
+    get: function () {
+      return db.Messages.sync()
+        .then(function() {
+          return db.Messages.findAll();
+        });
     }, // a function which produces all the messages
     
-    post: function (username, message, roomname, res) {
-      message = JSON.stringify(message);
-      // let queryString = 'INSERT INTO messages (id, roomname) values id = ;'
-      let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', ''${message}'')`;
-      db.queryPromise(string).then(function(result) {
-        res.end();
-      });
-      // db.connection.query(string, [], (err, data) => {
-      //   // if (err) {
-      //   //   console.log(err);
-      //   // } else {
-      //     console.log(data);
-      //   // }
-      // });
-      
-      
-      let userString = `INSERT INTO users (userId, username) values (null, '${username}')`;
-      
-      db.queryPromise(userString)
-        .then(function(results) { console.log(results); });
-      // db.connection.query(userString, [], (err, data) => {
-      //   // if (err) {
-      //   //   console.log(err);
-      //   // } else {
-      //     console.log(data);
-      //   // }
-      // });
-    } // a function which can be used to insert a message into the database
+    post: function (username, message, roomname) {
+      return db.Messages.sync()
+        .then(function() {
+          return db.Messages.create({username: username, roomname: roomname, message: message});
+        });
+    } 
   },
-
+  
   users: {
-    // Ditto as above.
-    get: function (res) {
-      let string = `select * from users;`;
-      db.queryPromise(string).then(function(results) {
-        console.log(results);
-        let newObj = {results};
-        res.writeHead(200, defaultCorsHeaders);
-        res.write(JSON.stringify(newObj));
-        res.end();
-      }).catch((err) => { throw err; });
-    },
+    get: function () {
+      return db.Users.sync()
+        .then(function() {
+          return db.Users.findAll();
+        });
+    }, // a function which produces all the messages
     
-    post: function (username, res) {
-      let userString = `INSERT INTO users (userId, username) values (null, '${username}')`;
-      db.queryPromise(userString)
-        .then(function(results) { res.end(); });
-    }
+    post: function (username) {
+      return db.Users.sync()
+        .then(function() {
+          return db.Users.create({username: username});
+        });
+    } 
   }
 };
-
-
-// exports.queryFunc = function (string, callback) {
-//   db.query(string, (err, data) => {
-//     if (err) throw err;
-//     callback(data);
-//   })
-// }
-
+    
