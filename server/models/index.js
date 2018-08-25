@@ -1,6 +1,6 @@
 var db = require('../db');
 
-console.log(db.query);
+// console.log(db.query);
 
 // (function (username, message, roomname) {
 //       let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', '${message}');`;
@@ -27,17 +27,39 @@ module.exports = {
     })
     }, // a function which produces all the messages
     post: function (username, message, roomname) {
-      let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', '${message}'')`;
+      console.log('args', message);
+      message = JSON.stringify(message);
+      let string = `INSERT INTO messages (id, roomname, username, message) values (null, '${roomname}', '${username}', ''${message}'')`;
+      console.log('STRING', string);
       db.query(string, (data) => {
         console.log(data)
       })
+      
+      let userString = `INSERT INTO users (userId, username) values (null, '${username}')`;
+      db.query(userString, (data) => {
+        console.log(data)
+      });
     } // a function which can be used to insert a message into the database
   },
 
   users: {
     // Ditto as above.
-    get: function () {},
-    post: function () {}
+    get: function () {
+      let string = `select * from users;`;
+      return new Promise(function(resolve, reject) {
+        db.query(string, (data) => {
+        console.log(data);
+        resolve(data)
+      })
+    })
+    },
+    
+    post: function (username) {
+      let userString = `INSERT INTO users (userId, username) values (null, '${username}')`;
+      db.query(userString, (data) => {
+        console.log(data)
+      });
+    }
   }
 };
 

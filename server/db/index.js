@@ -15,8 +15,9 @@ db.connect(function(err) {
 })
 
 exports.query = function (string, callback) {
-  db.query(string, (err, data) => {
+  db.query(string, (err, results) => {
     if (err) throw err;
-    callback(data);
+    console.log('QUERY DATA', results);
+    callback(results);
   })
 }
