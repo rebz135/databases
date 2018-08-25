@@ -9,11 +9,13 @@ module.exports = {
   messages: {
     get: function (req, res) {
       models.messages.get().then(function(results) {
-      let newObj = {results};
-      res.writeHead(200, defaultCorsHeaders);
-      res.write(JSON.stringify(newObj));
-      res.end();
-    })}, // a function which handles a get request for all messages
+        console.log('RESULT FROM DATA', results);
+        let newObj = {results};
+        res.writeHead(200, defaultCorsHeaders);
+        res.write(JSON.stringify(newObj));
+        res.end();
+      }).catch((err) => { throw err; });
+    }, // a function which handles a get request for all messages
     post: function (req, res) {
       models.messages.post(req.body.username, req.body.message, req.body.roomname);
       res.end();
@@ -24,13 +26,14 @@ module.exports = {
     // Ditto as above
     get: function (req, res) {
       models.users.get().then(function(results) {
-      let newObj = {results};
-      res.writeHead(200, defaultCorsHeaders);
-      res.write(JSON.stringify(newObj));
-      res.end();
-    })},
+        let newObj = {results};
+        res.writeHead(200, defaultCorsHeaders);
+        res.write(JSON.stringify(newObj));
+        res.end();
+      }).catch((err) => { throw err; });
+    },
     post: function (req, res) {
-      models.users.post(req.body.username)
+      models.users.post(req.body.username);
       res.end();
     }
   }

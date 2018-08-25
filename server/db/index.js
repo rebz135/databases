@@ -12,12 +12,16 @@ var db = mysql.createConnection({
 
 db.connect(function(err) {
   console.log(err);
-})
+});
 
-exports.query = function (string, callback) {
-  db.query(string, (err, results) => {
-    if (err) throw err;
-    console.log('QUERY DATA', results);
-    callback(results);
-  })
-}
+exports.connection = db;
+
+
+
+// function (string, callback) {
+//   db.query(string, (err, results) => {
+//     if (err) throw err;
+//     console.log('QUERY DATA', results);
+//     callback(results);
+//   })
+// }
